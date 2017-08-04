@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package multithreadingexercise;
+package CalculateRuntimeExercise;
 
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
@@ -28,11 +28,13 @@ public class Data implements Runnable ,IData {
     
     public void run() {
         try {
-            // do stuff here
+        
             TimeUnit.SECONDS.sleep(RunTime);
         } catch (InterruptedException ex) {
             Logger.getLogger(Data.class.getName()).log(Level.SEVERE, null, ex);
         }
+        
+          //logger.debug("Thread # " + threadId + " is doing this task");
           System.out.println(String.format("TaskId: %x RunTime: %x: ParentId: %d",TaskId,RunTime,ParentTaskId));
     }
     
