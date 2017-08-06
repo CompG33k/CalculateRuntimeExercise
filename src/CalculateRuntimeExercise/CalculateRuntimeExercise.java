@@ -38,7 +38,6 @@ public class CalculateRuntimeExercise {
        TestCaseLogic(graph);
        // Randomly generated values
        ProductionCode(graph);
-      
        System.out.println("Done");
     }
 
