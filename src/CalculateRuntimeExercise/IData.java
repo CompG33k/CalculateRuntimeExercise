@@ -10,7 +10,7 @@ package CalculateRuntimeExercise;
  * @author Nick
  */
 public interface IData {
-    public long GetTaskId();
-    public long GetRunTime();
-    public long GetParentTaskId();
+    public int getTaskId();
+    public int getRunTime();
+    public int getParentTaskId();
 }

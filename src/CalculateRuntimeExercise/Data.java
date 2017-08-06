@@ -15,11 +15,12 @@ import java.util.logging.Logger;
  */
 public class Data implements Runnable ,IData {
    
-
-    long TaskId;
-    long RunTime;
-    long ParentTaskId;
-    public Data(long taskId,long runTime,long parentTaskId)
+    int TaskId;
+    int RunTime;
+    int ParentTaskId;
+    
+    
+    public Data(int taskId,int runTime,int parentTaskId)
     {
         TaskId = taskId;
         RunTime = runTime;
@@ -28,25 +29,22 @@ public class Data implements Runnable ,IData {
     
     public void run() {
         try {
-        
             TimeUnit.SECONDS.sleep(RunTime);
         } catch (InterruptedException ex) {
             Logger.getLogger(Data.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
-          //logger.debug("Thread # " + threadId + " is doing this task");
-          System.out.println(String.format("TaskId: %x RunTime: %x: ParentId: %d",TaskId,RunTime,ParentTaskId));
+        System.out.println(String.format("TaskId: %x RunTime: %x: ParentId: %d",TaskId,RunTime,ParentTaskId));
     }
     
-    public long GetTaskId()
+    public int getTaskId()
     {
         return TaskId;
     }
-    public long GetRunTime()
+    public int getRunTime()
     {
         return RunTime;
     }
-    public long GetParentTaskId()
+    public int getParentTaskId()
     {
         return ParentTaskId;
     }
