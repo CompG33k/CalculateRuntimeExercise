@@ -4,7 +4,7 @@ Coding Exercise
 
 Details
 You are provided a randomized data set containing tasks, their runtimes and dependencies resembling the following:
-
+https://Github.com/CalculateRuntimeExercise.pdf[/embed]
 
 TaskID ,         Runtime (seconds)  ,  Dependency (Parent TaskID)
 
