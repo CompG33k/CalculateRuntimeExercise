@@ -129,18 +129,18 @@ public class Graph {
         return false;
     }
     
-    public DataStateContainer bfs(MapNode source)
+    public DataContainer bfs(MapNode source)
     {
         int totalRuntime = 0;
         Queue<MapNode> queue = new LinkedList<MapNode>();
         HashSet<MapNode> visited = new HashSet<MapNode>();
+        ArrayList<Data> returnList = new ArrayList<Data>();
         Stack<String> path = new Stack<String>();
-        ArrayList<DataState> returnList = new ArrayList<DataState>();
-        queue.add(source);
         
+        queue.add(source);     
         path.push(String.format("m%d",source.getTaskId()) );
-
-        returnList.add(new DataState(source.getData()));
+        returnList.add(source.getData());
+        
         totalRuntime = source.getData().getRunTime();
         while(!queue.isEmpty())
         {
@@ -153,7 +153,7 @@ public class Graph {
                 {
                     queue.add(V);
                     visited.add(V);
-                    returnList.add(new DataState(V.getData()));
+                    returnList.add(V.getData());
                     totalRuntime += V.getData().getRunTime();
                     path.push(String.format("m%d",V.getTaskId()) );
                 }
@@ -161,7 +161,7 @@ public class Graph {
         }
         
         String pathInformation = getPathInformation(path);
-        return new DataStateContainer(totalRuntime,pathInformation,returnList);
+        return new DataContainer(totalRuntime,pathInformation,returnList);
     }
 
     

@@ -11,26 +11,20 @@ import java.util.ArrayList;
  *
  * @author Nick
  */
-public class DataStateContainer implements Comparable<DataStateContainer> {
+public class DataContainer implements Comparable<DataContainer> {
     int runTime;
-    Boolean isVisited;
     String pathInformation;
     
-    ArrayList<DataState> pathList = new ArrayList<DataState>();
+    ArrayList<Data> pathList = new ArrayList<Data>();
     
-    public DataStateContainer(int runTime,String pathInformation, ArrayList<DataState> pathList)
+    public DataContainer(int runTime,String pathInformation, ArrayList<Data> pathList)
     {
         this.runTime = runTime;
         this.pathInformation = pathInformation;
         this.pathList = pathList;
-        isVisited = false;
     }
     
-    public Boolean isNodeExist(DataState data)
-    {
-        return this.pathList.contains(data);
-    }
-    public ArrayList<DataState> getPathList()
+    public ArrayList<Data> getPathList()
     {
         return this.pathList;
     }
@@ -40,26 +34,12 @@ public class DataStateContainer implements Comparable<DataStateContainer> {
         return this.runTime;
     }
     
-    public Boolean getIsVisited()
-    {
-        return this.isVisited;
-    }
-    
     public String getPathInformation()
     {
         return this.pathInformation;
-    }
+    }   
     
-    public void setIsVisited(Boolean value)
-    {
-        this.isVisited = value;
-        for(DataState current :pathList)
-        {
-            current.setVisited(value);
-        }
-    }
-    
-    @Override public int compareTo(DataStateContainer rhsObject) {
+    @Override public int compareTo(DataContainer rhsObject) {
         
         if(this.runTime == rhsObject.runTime)
         {    

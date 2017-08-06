@@ -5,8 +5,8 @@
  */
 package CalculateRuntimeExercise;
 
-import CalculateRuntimeExercise.DirectedWeightGraphDataStructure.DataState;
-import CalculateRuntimeExercise.DirectedWeightGraphDataStructure.DataStateContainer;
+import CalculateRuntimeExercise.DirectedWeightGraphDataStructure.Data;
+import CalculateRuntimeExercise.DirectedWeightGraphDataStructure.DataContainer;
 import CalculateRuntimeExercise.DirectedWeightGraphDataStructure.Graph;
 import CalculateRuntimeExercise.DirectedWeightGraphDataStructure.MapNode;
 import java.util.ArrayList;
@@ -14,16 +14,21 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
-
-
+import java.util.Stack;
 
 /**
  *
- * @author Nick
+ * @author Nick Velasco
  * 
  */
 public class CalculateRuntimeExercise {
 
+     /**
+     *  Results can be altered by the number of tasks by changing global values;
+     *  MAXTASKIDNUMBER
+     *  MAXRUNTIMENUMBER
+     *  MAXNUMBERTASKS
+    */
     static int MAXTASKIDNUMBER = 10;
     static int MAXRUNTIMENUMBER = 12;
     static int MAXNUMBERTASKS = 7;
@@ -34,15 +39,17 @@ public class CalculateRuntimeExercise {
      */
     public static void main(String[] args) {
         Graph graph = new Graph();
-       // Given data from sheet
+       // Given data from sheet Static...
        TestCaseLogic(graph);
        // Randomly generated values
        ProductionCode(graph);
+       
        System.out.println("Done");
     }
 
     private static void TestCaseLogic(Graph graph) {
-      
+        PrintHeader("Testcase");
+        
         MapNode m1 = new MapNode(new Data(1,12,1));
         MapNode m2 = new MapNode(new Data(2,2,2));
         MapNode m3 = new MapNode(new Data(3,8,2));
@@ -67,15 +74,15 @@ public class CalculateRuntimeExercise {
         graph.addEdge(m6, m4, 3);
         graph.addEdge(m7, m7, 4);
         
-        DataStateContainer hm1 = graph.bfs(m1);
-        DataStateContainer hm2 = graph.bfs(m2);
-        DataStateContainer hm3 = graph.bfs(m3);
-        DataStateContainer hm4 = graph.bfs(m4);
-        DataStateContainer hm5 = graph.bfs(m5);
-        DataStateContainer hm6 = graph.bfs(m6);
-        DataStateContainer hm7 = graph.bfs(m7);
+        DataContainer hm1 = graph.bfs(m1);
+        DataContainer hm2 = graph.bfs(m2);
+        DataContainer hm3 = graph.bfs(m3);
+        DataContainer hm4 = graph.bfs(m4);
+        DataContainer hm5 = graph.bfs(m5);
+        DataContainer hm6 = graph.bfs(m6);
+        DataContainer hm7 = graph.bfs(m7);
         
-        List<DataStateContainer> list = new ArrayList<DataStateContainer>();
+        List<DataContainer> list = new ArrayList<DataContainer>();
         list.add(hm1);
         list.add(hm2);
         list.add(hm3);
@@ -86,84 +93,90 @@ public class CalculateRuntimeExercise {
         
         Collections.sort(list,Collections.reverseOrder());
     
-        int i=1;
-        int parallelRunTime = 0;
-        int sequentialRunTime = 0;
-        for(DataStateContainer current: list)
-        {
-            System.out.println(String.format("Task %d", i++));
-            System.out.println(String.format("Runtime: %s Path %s",current.getRunTime(),current.getPathInformation()));
-            List<DataState> inList = current.getPathList();
-            for(DataState currentData : inList)
-            {
-              System.out.println(String.format("m%s RunTime %s",currentData.getTaskId(), currentData.getRunTime()));
-            }
-            
-            sequentialRunTime += current.getRunTime();
-            if(parallelRunTime < current.getRunTime())
-                parallelRunTime = current.getRunTime();
-            
-            System.out.println("-----");
-        }        
-        System.out.println("// ======================================================== //");
-        System.out.println("//                                                          //");
-        System.out.println("//                     TestCase                             //");
-        System.out.println("//                                                          //");
-        System.out.println("// ======================================================== //");
-        System.out.println(String.format("a.) Serially Runtime : %d seconds  ", sequentialRunTime));
-        System.out.println(String.format("b.) Parallel Runtime : %d seconds  ", parallelRunTime));
-        System.out.println("// ======================================================== //");
-        System.out.println("");
-    }
-    
-    private static void ProductionCode(Graph graph) {
-        HashSet<MapNode> mapList = getMapList();        
-        AddMapEdges(mapList, graph);
+        System.out.println("--------------------------------------------------------------");
         
-        List<DataStateContainer> list = getDataStateContainerList(mapList, graph);
-        // This is sorted by Runtime in Seconds... (overloaded)
-        Collections.sort(list,Collections.reverseOrder());
-    
         int i=1;
         int parallelRunTime = 0;
         int sequentialRunTime = 0;
-        for(DataStateContainer current: list)
+        for(DataContainer current: list)
         {
             System.out.println(String.format("Task %d", i++));
             System.out.println(String.format("Runtime: %s Path %s",current.getRunTime(),current.getPathInformation()));
-            List<DataState> inList = current.getPathList();
-            for(DataState currentData : inList)
-            {
-              System.out.println(String.format("m%s RunTime %s",currentData.getTaskId(), currentData.getRunTime()));
-            }
+            List<Data> inList = current.getPathList();
+            Stack<Data> stack= new Stack<Data>();
+            stack.addAll(inList);
+            int count =1;
+            System.out.println("Order:");
+            PrintBackwards(count,stack);            
             
             sequentialRunTime += current.getRunTime();
             if(parallelRunTime < current.getRunTime())
                 parallelRunTime = current.getRunTime();
             
-            System.out.println("-----");
+            System.out.println("--------------------------------------------------------------");
         }
+        PrintFooter(sequentialRunTime,parallelRunTime);
+    }    
+   
+    /**
+     *  Results can be altered by the number of tasks by changing global values;
+     *  MAXTASKIDNUMBER
+     *  MAXRUNTIMENUMBER
+     *  MAXNUMBERTASKS
+     * @param Graph
+    */
+    private static void ProductionCode(Graph graph) {
+        int i=1;
+        int parallelRunTime = 0;
+        int sequentialRunTime = 0;
         
-        System.out.println("// ======================================================== //");
-        System.out.println("//                                                          //");
-        System.out.println("//                     Random Generated                     //");
-        System.out.println("//                                                          //");
-        System.out.println("// ======================================================== //");
-        System.out.println(String.format("a.) Serially Runtime : %d seconds  ", sequentialRunTime));
-        System.out.println(String.format("b.) Parallel Runtime : %d seconds  ", parallelRunTime));
-        System.out.println("// ======================================================== //");
-        System.out.println("");
+        HashSet<MapNode> mapList = getMapList();        
+        PrintHeader("Random Generated");
+        
+        AddMapEdges(mapList, graph);
+        List<DataContainer> list = getDataContainerList(mapList, graph);
+        // This is sorted by Runtime in Seconds... (overloaded)
+        Collections.sort(list,Collections.reverseOrder());    
+        System.out.println("--------------------------------------------------------------");
+        
+        for(DataContainer current: list)
+        {
+            System.out.println(String.format("Task %d", i++));
+            System.out.println(String.format("Runtime: %s Path %s",current.getRunTime(),current.getPathInformation()));
+            List<Data> inList = current.getPathList();
+            Stack<Data> stack= new Stack<Data>();
+            stack.addAll(inList);
+            int count =1;
+            System.out.println("Order:");
+            PrintBackwards(count,stack);
+            
+            sequentialRunTime += current.getRunTime();
+            if(parallelRunTime < current.getRunTime())
+                parallelRunTime = current.getRunTime();
+            
+            System.out.println("--------------------------------------------------------------");
+        }
+        PrintFooter(sequentialRunTime,parallelRunTime);
     }
 
-    private static List<DataStateContainer> getDataStateContainerList(HashSet<MapNode> mapList, Graph graph) {
-        List<DataStateContainer> list = new ArrayList<DataStateContainer>();
+    private static void PrintBackwards(int count,Stack<Data> stack)
+    {
+        if(stack.isEmpty())
+            return;
+        Data current = stack.pop();
+        System.out.println(String.format("%d.) m%s RunTime %s",count,current.getTaskId(), current.getRunTime()));
+        PrintBackwards(++count,stack);
+    }
+    
+    private static List<DataContainer> getDataContainerList(HashSet<MapNode> mapList, Graph graph) {
+        List<DataContainer> list = new ArrayList<DataContainer>();
         for(MapNode source :mapList)
         {
             Data current = source.getData();
             MapNode destination = null;
             for(MapNode v: mapList)
             {
-                if(v.getTaskId() == current.ParentTaskId)
+                if(v.getTaskId() == current.getParentTaskId())
                 {
                     destination = v;
                     break;
@@ -182,13 +195,13 @@ public class CalculateRuntimeExercise {
             MapNode destination = null;
             for(MapNode v: mapList)
             {
-                if(v.getTaskId() == current.ParentTaskId)
+                if(v.getTaskId() == current.getParentTaskId())
                 {
                     destination = v;
                     break;
                 }
             }
-            graph.addEdge(source,destination , current.RunTime);
+            graph.addEdge(source,destination , current.getRunTime());
         }
     }
     
@@ -241,6 +254,28 @@ public class CalculateRuntimeExercise {
             l[i]= rn.nextInt(MAXNUMBERTASKS)+1;
         }
         return l;
+    }
+     
+    private static void PrintHeader(String title)
+    {
+       System.out.println("// ======================================================== //");
+       System.out.println("//                                                          //");
+       System.out.println(String.format("                       %s                             ",title));
+       System.out.println("//                                                          //");
+       System.out.println("// ======================================================== //");
+       System.out.println("");
+       System.out.println("--------------------------------------------------------------");
+    }
+    
+    private static void PrintFooter(int sequentialRunTime,int parallelRunTime)
+    {
+       System.out.println("// ==============  TestCase Generated Results ============= //");
+       System.out.println("");
+       System.out.println(String.format("a.) Serially Runtime : %d seconds  ", sequentialRunTime));
+       System.out.println(String.format("b.) Parallel Runtime : %d seconds  ", parallelRunTime));
+       System.out.println("");
+       System.out.println("// ======================================================== //");
+       System.out.println("");
     }
 }
 
